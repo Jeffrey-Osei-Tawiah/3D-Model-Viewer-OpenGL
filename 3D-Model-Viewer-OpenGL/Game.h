@@ -1,6 +1,9 @@
 #pragma once
 #include <SDL3/SDL.h>
 
+#include "Shader.h"
+#include "Model.h"
+
 // TODO
 // shader, mesh, model
 // actors and components
@@ -35,5 +38,10 @@ private:
 
 	bool mIsRunning;
 	uint64_t mTicksCount;
+
+	// testing
+	Shader sh;
+	class Model* model;
+	float angle = 0;
 };
 
