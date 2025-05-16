@@ -6,7 +6,6 @@
 #include "Model.h"
 
 // TODO
-// actors and components
 // camera, model
 // user interface
 
