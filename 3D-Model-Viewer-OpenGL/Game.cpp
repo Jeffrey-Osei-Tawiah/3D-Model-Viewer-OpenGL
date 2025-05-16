@@ -1,8 +1,11 @@
 #include "Game.h"
 #include <GL/glew.h>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "Actor.h"
 
 
 #define FPS 60
@@ -10,7 +13,7 @@
 Game* Game::mInstance = NULL;
 
 Game::Game()
-	:mWindow(NULL), mContext(NULL), mIsRunning(false), mTicksCount(0)
+	:mWindow(NULL), mContext(NULL), mIsRunning(false), mTicksCount(0), mUpdatingActors(false)
 {
 
 }
@@ -93,14 +96,38 @@ void Game::Shutdown()
 	SDL_GL_DestroyContext(mContext);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
+	delete mInstance;
 }
 
-void Game::AddActor(Actor*)
+void Game::AddActor(Actor* actor)
 {
+	if (mUpdatingActors)
+	{
+		mPendingActors.push_back(actor);
+	}
+	else
+	{
+		mActors.push_back(actor);
+	}
 }
 
-void Game::RemoveActor(Actor*)
+void Game::RemoveActor(Actor* actor)
 {
+	auto iter = std::find(mActors.begin(), mActors.end(), actor);
+
+	if (iter != mActors.end())
+	{
+		std::iter_swap(iter, mActors.end() - 1);
+		mActors.pop_back();
+		return;
+	}
+
+	iter = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
+	if (iter != mPendingActors.end())
+	{
+		std::iter_swap(iter, mPendingActors.end() - 1);
+		mPendingActors.pop_back();
+	}
 }
 
 void Game::HandleInput()
@@ -133,11 +160,27 @@ void Game::Update()
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 	mTicksCount = SDL_GetTicks();
 
+	mUpdatingActors = true;
+	for (Actor* actor : mActors)
+	{
+		actor->Update(deltaTime);
+	}
+	mUpdatingActors = false;
 
-	// update actors
-	//delete actors
+	for (Actor* actor : mPendingActors)
+	{
+		mActors.push_back(actor);
+	}
+	mPendingActors.clear();
 
-	angle += 30 * deltaTime;
+	for (auto iter = mActors.begin(); iter != mActors.end(); iter++)
+	{
+		if ((*iter)->GetState() == Actor::EDead)
+		{
+			delete (*iter);
+			iter--;
+		}
+	}
 }
 
 void Game::Render()
@@ -145,30 +188,12 @@ void Game::Render()
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 m = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -10));
-	m = glm::rotate(m, glm::radians(angle), glm::vec3(0, 1, 0));
-	m = glm::scale(m, glm::vec3(1, 1, 1));
-
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800 / 600.0f, 0.1f, 100.0f);
-
-	sh.Use();
-	sh.SetMat4("model", m);
-	sh.SetMat4("view", view);
-	sh.SetMat4("projection", proj);
-
-	model->Draw(sh);
-
-	glUseProgram(0);
 
 	SDL_GL_SwapWindow(mWindow);
 }
 
 void Game::LoadData()
 {
-	sh = Shader("shader.vert", "shader.frag");
-	model = new Model("backpack/backpack.obj");
-
 	glEnable(GL_DEPTH_TEST);
 }
 
