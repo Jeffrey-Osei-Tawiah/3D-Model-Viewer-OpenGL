@@ -5,36 +5,7 @@
 
 class Actor
 {
-private:
-	// Getters and Setters similar to C#
-	// no need to make pos,scal and rotation
-	// private
-	template<typename T>
-	class Property
-	{
-	public:
-		Property() = default;
-		Property(const T& val, Actor* actor) : mValue(val), mActor(actor) {}
-
-		T& operator=(const T& val)
-		{
-			mValue = val;
-			mActor->mRecomputeModelMatrix = true;
-		}
-
-		operator T() const {
-			return mValue;
-		}
-	private:
-		T mValue;
-		Actor* mActor;
-	};
-
 public:
-	Property<glm::vec3> Position;
-	Property<glm::vec3> Scale;
-	Property<glm::quat> Rotation;
-
 	enum State
 	{
 		EActive,
@@ -56,10 +27,27 @@ public:
 	// Getters/Setters
 	State GetState()const { return mState; }
 	void SetState(State state) { mState = state; }
+
+	void SetPosition(float x = 0, float y = 0, float z = 0) { mPosition = glm::vec3(x, y, z); mRecomputeModelMatrix = true; }
+	void SetPosition(const glm::vec3& pos) { mPosition = pos; mRecomputeModelMatrix = true; }
+	const glm::vec3& GetPosition()const { return mPosition; }
+
+	void SetScale(float x = 1, float y = 1, float z = 1) { mScale = glm::vec3(x, y, z); mRecomputeModelMatrix = true; }
+	void SetScale(const glm::vec3& scale) { mScale = scale; mRecomputeModelMatrix = true; }
+	const glm::vec3& GetPosition()const { return mPosition; }
+
+	void SetRotation(float w = 1, float x = 0, float y = 0, float z = 0) { mRotation = glm::quat(w, x, y, z); mRecomputeModelMatrix = true; }
+	void SetRotation(const glm::quat& q) { mRotation = q; mRecomputeModelMatrix = true; }
+	const glm::quat& GetRotation()const { return mRotation; }
+
 private:
 	State mState;
+	glm::vec3 mPosition;
+	glm::vec3 mScale;
+	glm::quat mRotation;
 
 	bool mRecomputeModelMatrix;
+	glm::mat4 mModelMatrix;
 	std::vector<class Component*> mComponents;
 };
 

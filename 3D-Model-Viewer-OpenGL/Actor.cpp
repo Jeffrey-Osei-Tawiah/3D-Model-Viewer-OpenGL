@@ -3,12 +3,14 @@
 #include "Component.h"
 
 #include <algorithm>
+#include <glm/gtc/matrix_transform.hpp>
 
 Actor::Actor()
 	:mRecomputeModelMatrix(false),
-	Position(glm::vec3(0.0f), this),
-	Scale(glm::vec3(1.0f), this),
-	Rotation(glm::quat(1.0f, 0, 0, 0), this),
+	mPosition(glm::vec3(0.0f)),
+	mScale(glm::vec3(1.0f)),
+	mRotation(glm::quat(1.0f, 0, 0, 0)),
+	mModelMatrix(glm::mat4(1.0f)),
 	mState(EActive)
 {
 	Game::Instance()->AddActor(this);
@@ -54,6 +56,16 @@ void Actor::Update(float deltaTime)
 {
 	if (mState == EActive)
 	{
+		if (mRecomputeModelMatrix)
+		{
+			mModelMatrix = glm::scale(glm::mat4(1.0f), mScale);
+			glm::mat4 rot = glm::mat4_cast(mRotation);
+			mModelMatrix = rot * mModelMatrix;
+			mModelMatrix = glm::translate(mModelMatrix, mPosition);
+
+			mRecomputeModelMatrix = false;
+		}
+
 		UpdateComponents(deltaTime);
 		UpdateActor(deltaTime);
 	}
