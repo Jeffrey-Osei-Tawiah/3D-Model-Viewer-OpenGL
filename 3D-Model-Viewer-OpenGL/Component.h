@@ -8,8 +8,9 @@ public:
 	virtual void Update(float deltaTime){}
 
 	int GetUpdateOrder()const { return mUpdateOrder; }
-private:
+protected:
 	class Actor* mActor;
+private:
 	int mUpdateOrder;
 };
 

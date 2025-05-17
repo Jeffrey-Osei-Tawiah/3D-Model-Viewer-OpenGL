@@ -22,7 +22,7 @@ public:
 	void Update(float deltaTime);
 	void UpdateComponents(float deltaTime);
 
-	virtual void UpdateActor(float deltaTime) {}
+	virtual void UpdateActor(float deltaTime){}
 
 	// Getters/Setters
 	State GetState()const { return mState; }
@@ -34,11 +34,13 @@ public:
 
 	void SetScale(float x = 1, float y = 1, float z = 1) { mScale = glm::vec3(x, y, z); mRecomputeModelMatrix = true; }
 	void SetScale(const glm::vec3& scale) { mScale = scale; mRecomputeModelMatrix = true; }
-	const glm::vec3& GetPosition()const { return mPosition; }
+	const glm::vec3& GetScale()const { return mScale; }
 
 	void SetRotation(float w = 1, float x = 0, float y = 0, float z = 0) { mRotation = glm::quat(w, x, y, z); mRecomputeModelMatrix = true; }
 	void SetRotation(const glm::quat& q) { mRotation = q; mRecomputeModelMatrix = true; }
 	const glm::quat& GetRotation()const { return mRotation; }
+
+	const glm::mat4& GetModelMatrix()const { return mModelMatrix; }
 
 private:
 	State mState;

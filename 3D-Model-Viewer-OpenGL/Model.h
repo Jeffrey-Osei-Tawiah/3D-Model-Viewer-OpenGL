@@ -30,6 +30,7 @@ class Mesh
 {
 public:
 	Mesh(std::vector<Vertex>&, std::vector<unsigned int>&, std::vector<Texture>&);
+	void DestroyMesh(); // unused. TODO: use!
 	void Draw(Shader&);
 
 private:

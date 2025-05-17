@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Actor.h"
+#include "ModelComponent.h"
 
 
 #define FPS 60
@@ -93,6 +94,7 @@ void Game::Runloop()
 
 void Game::Shutdown()
 {
+	UnloadData();
 	SDL_GL_DestroyContext(mContext);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
@@ -188,6 +190,7 @@ void Game::Render()
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	mRenderer.Draw();
 
 	SDL_GL_SwapWindow(mWindow);
 }
@@ -195,10 +198,20 @@ void Game::Render()
 void Game::LoadData()
 {
 	glEnable(GL_DEPTH_TEST);
+
+	// test
+	Actor* testActor = new Actor();
+	ModelComponent* backpack = new ModelComponent(testActor, "backpack/backpack.obj", "shader.vert", "shader.frag");
+
+	testActor->SetPosition(0, 0, -10.0f);
 }
 
 void Game::UnloadData()
 {
+	for (Actor* actor : mActors)
+	{
+		delete actor;
+	}
 }
 
 

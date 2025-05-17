@@ -4,6 +4,7 @@
 
 #include "Shader.h"
 #include "Model.h"
+#include "Renderer.h"
 
 // TODO
 // camera, model
@@ -23,6 +24,8 @@ public:
 
 	void AddActor(class Actor*);
 	void RemoveActor(class Actor*);
+
+	Renderer& GetRenderer() { return mRenderer; }
 private:
 	static Game* mInstance;
 	void HandleInput();
@@ -41,5 +44,7 @@ private:
 	bool mUpdatingActors;
 	std::vector<class Actor*> mActors;
 	std::vector<class Actor*> mPendingActors;
+
+	Renderer mRenderer;
 };
 

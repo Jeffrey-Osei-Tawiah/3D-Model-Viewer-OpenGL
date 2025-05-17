@@ -68,6 +68,16 @@ void Actor::Update(float deltaTime)
 
 		UpdateComponents(deltaTime);
 		UpdateActor(deltaTime);
+
+		if (mRecomputeModelMatrix)
+		{
+			mModelMatrix = glm::scale(glm::mat4(1.0f), mScale);
+			glm::mat4 rot = glm::mat4_cast(mRotation);
+			mModelMatrix = rot * mModelMatrix;
+			mModelMatrix = glm::translate(mModelMatrix, mPosition);
+
+			mRecomputeModelMatrix = false;
+		}
 	}
 }
 
