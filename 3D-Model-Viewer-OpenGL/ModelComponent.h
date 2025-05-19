@@ -15,7 +15,7 @@ public:
 	~ModelComponent();
 
 	// TODO: add camera class and use as parameter for Draw()
-	void Draw();
+	void Draw(class Camera* cam);
 private:
 	Shader mShader;
 	Model* mModel;

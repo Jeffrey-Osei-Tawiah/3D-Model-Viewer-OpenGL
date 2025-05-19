@@ -20,10 +20,10 @@ void Renderer::RemoveModelComponent(ModelComponent* model)
 	}
 }
 
-void Renderer::Draw()
+void Renderer::Draw(class Camera* cam)
 {
 	for (ModelComponent* model : mModels)
 	{
-		model->Draw();
+		model->Draw(cam);
 	}
 }

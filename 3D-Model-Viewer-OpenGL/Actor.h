@@ -14,7 +14,7 @@ public:
 	};
 
 	Actor();
-	~Actor();
+	virtual ~Actor();
 
 	void AddComponent(class Component* component);
 	void RemoveComponent(class Component* component);
@@ -41,6 +41,11 @@ public:
 	const glm::quat& GetRotation()const { return mRotation; }
 
 	const glm::mat4& GetModelMatrix()const { return mModelMatrix; }
+
+	// Probably Temp
+	// On event functions
+	virtual void OnMouseMotion(const glm::vec2& motion){}
+	virtual void ActorInput(const glm::vec2& movementAxis){}
 
 private:
 	State mState;

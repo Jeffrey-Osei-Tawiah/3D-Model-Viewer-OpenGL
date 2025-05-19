@@ -46,5 +46,8 @@ private:
 	std::vector<class Actor*> mPendingActors;
 
 	Renderer mRenderer;
+
+	// game
+	class Camera* cam;
 };
 

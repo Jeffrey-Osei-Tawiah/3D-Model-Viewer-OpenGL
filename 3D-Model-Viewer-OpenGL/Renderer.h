@@ -9,7 +9,7 @@ public:
 	void AddModelComponent(class ModelComponent* model);
 	void RemoveModelComponent(class ModelComponent* model);
 
-	void Draw();
+	void Draw(class Camera* cam);
 private:
 	std::vector<class ModelComponent*> mModels;
 };

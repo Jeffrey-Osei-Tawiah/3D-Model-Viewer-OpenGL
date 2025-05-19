@@ -7,6 +7,7 @@
 
 #include "Actor.h"
 #include "ModelComponent.h"
+#include "Camera.h"
 
 
 #define FPS 60
@@ -147,7 +148,31 @@ void Game::HandleInput()
 			if (event.key.key == SDLK_ESCAPE)
 				mIsRunning = false;
 			break;
+
+		case SDL_EVENT_MOUSE_MOTION:
+			for (Actor* actor : mActors)
+			{
+				actor->OnMouseMotion(glm::vec2(-event.motion.xrel, -event.motion.yrel));
+			}
+			break;
 		}
+	}
+
+	const bool* kState = SDL_GetKeyboardState(NULL);
+	glm::vec2 movementAxis = glm::vec2(0);
+
+	if (kState[SDL_SCANCODE_A])
+		movementAxis.x += -1;
+	if (kState[SDL_SCANCODE_D])
+		movementAxis.x += 1;
+	if (kState[SDL_SCANCODE_W])
+		movementAxis.y += 1;
+	if (kState[SDL_SCANCODE_S])
+		movementAxis.y += -1;
+
+	for (Actor* actor : mActors)
+	{
+		actor->ActorInput(movementAxis);
 	}
 }
 
@@ -190,7 +215,7 @@ void Game::Render()
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	mRenderer.Draw();
+	mRenderer.Draw(cam);
 
 	SDL_GL_SwapWindow(mWindow);
 }
@@ -198,19 +223,22 @@ void Game::Render()
 void Game::LoadData()
 {
 	glEnable(GL_DEPTH_TEST);
+	SDL_SetWindowRelativeMouseMode(mWindow, true);
 
 	// test
 	Actor* testActor = new Actor();
 	ModelComponent* backpack = new ModelComponent(testActor, "backpack/backpack.obj", "shader.vert", "shader.frag");
 
 	testActor->SetPosition(0, 0, -10.0f);
+
+	cam = new Camera();
 }
 
 void Game::UnloadData()
 {
-	for (Actor* actor : mActors)
+	while(!mActors.empty())
 	{
-		delete actor;
+		delete mActors.back();
 	}
 }
 
